@@ -1,0 +1,27 @@
+{
+    "rows": 4, 
+    "children": [
+        {
+            "movegenPos": "707,501", 
+            "retType": 2, 
+            "movEndPos": "920,684", 
+            "movePosID": 50001, 
+            "movemidPos": -1
+        }, 
+        {
+            "movegenPos": "627,196", 
+            "retType": 2, 
+            "movEndPos": "915,85", 
+            "movePosID": 50002, 
+            "movemidPos": -1
+        }, 
+        {
+            "movegenPos": "193,260", 
+            "retType": 2, 
+            "movEndPos": "238,618", 
+            "movePosID": 50003, 
+            "movemidPos": -1
+        }
+    ], 
+    "title": "E:\\creatorProjects\\projectXs\\DocAndArt\\xlsx\\excelToJson\\config.xlsx"
+}

@@ -1,0 +1,36 @@
+{
+    "rows": 7, 
+    "children": [
+        {
+            "monsterId": 10001, 
+            "type": 1, 
+            "uMonsterId": 101
+        }, 
+        {
+            "monsterId": "10002,10003", 
+            "type": 1, 
+            "uMonsterId": 102
+        }, 
+        {
+            "monsterId": "10004", 
+            "type": 1, 
+            "uMonsterId": 103
+        }, 
+        {
+            "monsterId": "10005,10006,10007", 
+            "type": 1, 
+            "uMonsterId": 104
+        }, 
+        {
+            "monsterId": "10008,1;10009,1;10010,1;10011,1;", 
+            "type": 2, 
+            "uMonsterId": 105
+        }, 
+        {
+            "monsterId": "10008,3;10009,3;10010,3;10011,3;10012,3;10013,3;10014,3;10015,3;", 
+            "type": 2, 
+            "uMonsterId": 106
+        }
+    ], 
+    "title": "E:\\creatorProjects\\projectX\\DocAndArt\\xlsx\\excelToJson\\config.xlsx"
+}

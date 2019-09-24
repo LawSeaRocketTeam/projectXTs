@@ -1,0 +1,22 @@
+{
+    "rows": 3, 
+    "children": [
+        {
+            "roundCount": 2, 
+            "fortId": 1, 
+            "fortPos": "0,0", 
+            "uMonsterId": "105,105", 
+            "monsterType": "", 
+            "fortHp": 6
+        }, 
+        {
+            "roundCount": 1, 
+            "fortId": 2, 
+            "fortPos": "0,0", 
+            "uMonsterId": 106, 
+            "monsterType": "", 
+            "fortHp": 6
+        }
+    ], 
+    "title": "E:\\creatorProjects\\projectX\\DocAndArt\\xlsx\\excelToJson\\config.xlsx"
+}

@@ -1,0 +1,17 @@
+{
+    "rows": 2, 
+    "children": [
+        {
+            "img": "", 
+            "initGenTime": -1, 
+            "fortHp": -1, 
+            "isFort": 0, 
+            "manId": 20001, 
+            "refreshInterval": 5, 
+            "uManId": 201, 
+            "fortGenPos": -1, 
+            "isGenOnStart": 0
+        }
+    ], 
+    "title": "E:\\creatorProjects\\projectXs\\DocAndArt\\xlsx\\excelToJson\\config.xlsx"
+}

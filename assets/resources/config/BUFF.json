@@ -1,0 +1,13 @@
+{
+    "rows": 2, 
+    "children": [
+        {
+            "buffId": 40001, 
+            "bulletSupplyRate": -1, 
+            "addLifeCount": 1, 
+            "sellPrice": 500, 
+            "timeSupplyRate": -1
+        }
+    ], 
+    "title": "E:\\creatorProjects\\projectXs\\DocAndArt\\xlsx\\excelToJson\\config.xlsx"
+}
