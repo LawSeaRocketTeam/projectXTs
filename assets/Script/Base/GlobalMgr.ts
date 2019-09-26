@@ -23,10 +23,15 @@ export default class GlobalMgr extends cc.Component {
     }
     // LIFE-CYCLE CALLBACKS:
 
-    // onLoad () {}
+     onLoad () {
+        EventDispatcher.getInstance().init();
+        //cc.vv.i18n.init(cc.sys.language);
+        cc.vv.i18n.init(cc.sys.language);
+     }
 
     start () {
-        EventDispatcher.getInstance().init();
+        //EventDispatcher.getInstance().init();
+        //cc.vv.i18n.init(cc.sys.language);
     }
 
     // update (dt) {}

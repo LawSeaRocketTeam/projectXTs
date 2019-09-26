@@ -1170,6 +1170,8 @@ declare namespace cc {
 	/** !#en The System event singleton for global usage
 	!#zh 系统事件单例，方便全局使用 */
 	export var systemEvent: SystemEvent;	
+	/** ! 自定义全局对象保存数据 */
+	export var vv : any;
 	/**
 	!#en Defines a CCClass using the given specification, please see [Class](/docs/editors_and_tools/creator-chapters/scripting/class.html) for details.
 	!#zh 定义一个 CCClass，传入参数必须是一个包含类型参数的字面量对象，具体用法请查阅[类型定义](/docs/creator/scripting/class.html)。
@@ -17585,7 +17587,10 @@ declare namespace cc.js {
 		*/
 		resize(): void;	
 	}
+
+	//---------------------------------------custon export--------------------------------
 }
+
 declare namespace dragonBones {
     /**
      * @internal
