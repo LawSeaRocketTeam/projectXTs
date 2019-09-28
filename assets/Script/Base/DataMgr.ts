@@ -1,20 +1,44 @@
-//游戏里面所有数据存储管理的的地方
+// Learn TypeScript:
+//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
+//  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
+// Learn Attribute:
+//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/reference/attributes.html
+//  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/reference/attributes.html
+// Learn life-cycle callbacks:
+//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
+//  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-var encrypt = require("encryptjs");
+const {ccclass, property} = cc._decorator;
+
+import Singleton from './Singleton';
 var secretkey = "project_x_20190809"
 var OP_SETTING_NAME = "OP_SETTING_NAME"
 var GUANQIA_DATA_NAME = "GUANQIA_DATA"
 
+@ccclass
+export default class DataMgr extends Singleton {
 
-cc.Class({
-    extends: cc.Component,
+    opSetting = {op:0,sensi:5};     //操作设置
+    gameSetting = {};               //游戏设置 
+    configGuanQiaData:any = null;   //关卡配置数据
+    guanQiaData:any = null;         //玩家关卡保存数据
+    configMonsterData:any = null;   //怪物保配置数据
+    configManData:any = null;       //平民配置数据
+    configFortData:any = null;      //堡垒配置数据
+    configSupplyData:any = null;    //补给配置数据
+    configUmonsters:any = null;     //怪物集配置数据
+    configMovePosUtil:any = null;   //移动坐标集配置数据
 
-    ctor : function() {
+    constructor() {
+        super();
+    }
+
+    public init(){
         this.opSetting = {op:0,sensi:5}; //操作设置
         this.gameSetting = {};  //游戏设置
         let opSettingData = cc.sys.localStorage.getItem(OP_SETTING_NAME);
         if(opSettingData != undefined){
-            opSettingData = JSON.parse(encrypt.decrypt(opSettingData,secretkey,256));
+            opSettingData = JSON.parse(cc.vv.encrypt.decrypt(opSettingData,secretkey,256));
             this.opSetting.op = opSettingData.op;
             this.opSetting.sensi = opSettingData.sensi;
         }
@@ -29,7 +53,7 @@ cc.Class({
             //游戏用户关卡数据
             let gqData = cc.sys.localStorage.getItem(GUANQIA_DATA_NAME);
             if(gqData != undefined){
-                self.guanQiaData = JSON.parse(encrypt.decrypt(gqData,secretkey,256));
+                self.guanQiaData = JSON.parse(cc.vv.encrypt.decrypt(gqData,secretkey,256));
             }
             else{
                 //如果是空,则添加关卡的第一个集合
@@ -79,21 +103,21 @@ cc.Class({
             }
             self.configMovePosUtil = data.json;
         });
-    },
-
+    }
+    
     //存储操作模式
-    saveOpSetting : function(_op,_sensi){
+    public saveOpSetting(_op:number,_sensi:number){
         this.opSetting.op = _op;
         this.opSetting.sensi = _sensi;
         let jsonData = JSON.stringify(this.opSetting);
-        let encryData = encrypt.encrypt(jsonData,secretkey,256);
+        let encryData = cc.vv.encrypt.encrypt(jsonData,secretkey,256);
         cc.sys.localStorage.setItem(OP_SETTING_NAME,encryData);
-    },
+    }
 
     //添加关卡集合初始数据
     //_idx : 关卡集合下标
     //ret : 添加是否成功
-    addGuanQiaUtil : function(_idx){
+    public addGuanQiaUtil(_idx:number){
         let guankaCfgUtil = this.getGuanKaUtilByIdx(_idx);
         if(guankaCfgUtil.length == 0)
             return false
@@ -107,10 +131,10 @@ cc.Class({
         }
         this.guanQiaData.push(util);
         return true;
-    },
+    }
 
     //根据关卡ID判断该关卡是否之前已经成功通过
-    checkGuanQiaIsPassBefore : function(_id){
+    public checkGuanQiaIsPassBefore(_id:number){
         let page = Math.floor(_id / 1000);
         let guan = Math.floor((_id - page * 1000) / 10);
         let star = Math.floor(((_id - page * 1000) - guan * 10));
@@ -120,38 +144,37 @@ cc.Class({
             return true;
         else
             return false;
-    },
+    }
 
     //通过ID保存数据
-    saveGuanQiaById :function(_id){
+    public saveGuanQiaById(_id:number){
         let page = Math.floor(_id / 1000);
         let guan = Math.floor((_id - page * 1000) / 10);
         let star = Math.floor(((_id - page * 1000) - guan * 10));
         let util = this.guanQiaData[page-1];
         let item = util[guan-1];
         item.star = star;
-    },
-
+    }
 
     //命令手段添加
-    cmdGuanQiaSave : function(_id){
+    public cmdGuanQiaSave(_id:number){
         let page = Math.floor(_id / 1000);
         let guan = Math.floor((_id - page * 1000) / 10);
         let star = Math.floor(((_id - page * 1000) - guan * 10));
         let util = this.guanQiaData[page-1];
         let item = util[guan-1];
         item.star = star-1;
-    },
+    }
 
     //存储关卡数据到文件
-    saveGuanQiaData : function(){
+    public saveGuanQiaData(){
         let jsonData = JSON.stringify(this.guanQiaData);
-        let encryData = encrypt.encrypt(jsonData,secretkey,256);
+        let encryData = cc.vv.encrypt.encrypt(jsonData,secretkey,256);
         cc.sys.localStorage.setItem(GUANQIA_DATA_NAME,encryData);
-    },
+    }
 
     //根据下标(页面)获取一个关卡集
-    getGuanKaUtilByIdx : function(_idx){
+    public getGuanKaUtilByIdx(_idx:number){
         let utils = [];
         for(let k in this.configGuanQiaData){
             let v = this.configGuanQiaData[k];
@@ -161,10 +184,10 @@ cc.Class({
             }
         }
         return utils;
-    },
+    }
 
     //根据关卡ID获取配置中的关卡数据
-    getGuanQiaCfgDataById : function(_gid){
+    public getGuanQiaCfgDataById(_gid:number){
         for(let k in this.configGuanQiaData){
             let v = this.configGuanQiaData[k];
             if(v.gId == _gid){
@@ -172,12 +195,11 @@ cc.Class({
             }
         }
         return undefined;
-    },
+    }
 
     //根据当前关卡ID获取下一关关卡ID
-    getNextGuanQiaIdById : function(_curGid){
+    public getNextGuanQiaIdById(_curGid:number){
         for(let k in this.configGuanQiaData){
-            let k = parseInt(k);
             let v = this.configGuanQiaData[k];
             if(v.gId == _curGid){
                 if(k + 1 < this.configGuanQiaData.length){
@@ -187,10 +209,10 @@ cc.Class({
             }
         }
         return -1;
-    },
+    }
 
     //根据怪物的集合ID获取怪物集合
-    getMonsterCfgDataByUid : function(_uid){
+    public getMonsterCfgDataByUid(_uid:number){
         let monsters = [];
         for(let k in this.configUmonsters.children){
             let v = this.configUmonsters.children[k];
@@ -225,20 +247,20 @@ cc.Class({
             }
         }
         return monsters;
-    },
+    }
 
     //根据怪物ID获取怪物数据
-    getMonsterCfgDataById : function(_id){
+    public getMonsterCfgDataById(_id:number){
         for(let k in this.configMonsterData.children){
             let md = this.configMonsterData.children[k];
             if(md.monsterId == _id){
                 return JSON.parse(JSON.stringify(md));
             }
         }
-    },
+    }
 
     //根据平民的集合ID获取平民集合
-    getMenCfgDataByUid : function(_uid){
+    public getMenCfgDataByUid(_uid:number){
         let men = [];
         for(let k in this.configManData.children){
             let v = this.configManData.children[k];
@@ -247,10 +269,10 @@ cc.Class({
             }
         }
         return men;
-    },
+    }
 
     //根据补给的集合ID获取补给集合
-    getSupplyCfgDataByUid : function(_uid){
+    public getSupplyCfgDataByUid(_uid:number){
         let supply = [];
         for(let k in this.configSupplyData.children){
             let v = this.configSupplyData.children[k]
@@ -259,10 +281,10 @@ cc.Class({
             }
         }
         return supply;
-    },
+    }
 
     //根据ID获取位置数据
-    getMovPosCfgDataById : function(_id){
+    public getMovPosCfgDataById(_id:number){
         for(let k in this.configMovePosUtil.children){
             let v = this.configMovePosUtil.children[k]
             if(v.movePosID == _id){
@@ -270,10 +292,10 @@ cc.Class({
             }
         }
         return undefined;
-    },
+    }
 
     //根据堡垒ID获取堡垒数据
-    getFortCfgDataById : function(_id){
+    public getFortCfgDataById(_id:number){
         for(let k in this.configFortData.children){
             let v = this.configFortData.children[k]
             if(v.fortId == _id){
@@ -281,5 +303,5 @@ cc.Class({
             }
         }
         return undefined;
-    },
-});
+    }
+}

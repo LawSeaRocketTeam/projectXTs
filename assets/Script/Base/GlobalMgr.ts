@@ -10,6 +10,7 @@
 
 const {ccclass, property} = cc._decorator;
 import EventDispatcher from './EventDispatcherMgr';
+import DataMgr from './DataMgr';
 
 @ccclass
 export default class GlobalMgr extends cc.Component {
@@ -25,6 +26,7 @@ export default class GlobalMgr extends cc.Component {
 
      onLoad () {
         EventDispatcher.getInstance().init();
+        DataMgr.getInstance().init();
         //cc.vv.i18n.init(cc.sys.language);
         cc.vv.i18n.init(cc.sys.language);
      }

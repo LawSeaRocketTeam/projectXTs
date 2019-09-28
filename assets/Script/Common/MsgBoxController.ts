@@ -1,29 +1,35 @@
-// Learn cc.Class:
-//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/class.html
-//  - [English] http://docs.cocos2d-x.org/creator/manual/en/scripting/class.html
+// Learn TypeScript:
+//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
+//  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
 // Learn Attribute:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/reference/attributes.html
-//  - [English] http://docs.cocos2d-x.org/creator/manual/en/scripting/reference/attributes.html
+//  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/reference/attributes.html
 // Learn life-cycle callbacks:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
-//  - [English] https://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
+//  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-cc.Class({
-    extends: cc.Component,
+const {ccclass, property} = cc._decorator;
 
-    properties: {
-        floatNode : cc.Node,
-        boxNode : cc.Node,
-    },
+@ccclass
+export default class MsgBoxController extends cc.Component {
+
+    @property(cc.Node)
+    floatNode : cc.Node = null;
+
+    @property(cc.Node)
+    boxNode : cc.Node = null;
 
     // LIFE-CYCLE CALLBACKS:
 
-    // onLoad () {},
+    // onLoad () {}
+    leftFunc : any = null;
+    rightFunc : any = null;
 
     start () {
-    },
 
-    show : function(_content,_title,_leftBtTxt,_leftFunc,_rightBtTxt,_rightFunc){
+    }
+
+    public show(_content:string,_title:string,_leftBtTxt:string,_leftFunc:any,_rightBtTxt:string,_rightFunc:any){
         if(_leftBtTxt == undefined && _rightBtTxt == undefined){
             //如果左右按钮皆为空，默认用飘窗
             this.floatNode.active = true;
@@ -65,23 +71,23 @@ cc.Class({
                 btCancel.getChildByName("txt").getComponent(cc.Label).string = _rightBtTxt;
             }
         }
-    },
+    }
 
-    onLeftClick : function(event, customEventData){
+    public onLeftClick(event:any, customEventData:any){
         if(this.leftFunc != undefined){
             this.leftFunc(event, customEventData);
         }
         this.node.removeFromParent();
         this.leftFunc = undefined;
-    },
+    }
 
-    onRightClick : function(event, customEventData){
+    public onRightClick(event:any, customEventData:any){
         if(this.rightFunc != undefined){
             this.rightFunc(event, customEventData);
         }
         this.node.removeFromParent();
         this.rightFunc = undefined;
-    },
+    }
 
-    // update (dt) {},
-});
+    // update (dt) {}
+}
