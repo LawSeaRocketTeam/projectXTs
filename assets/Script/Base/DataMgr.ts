@@ -18,16 +18,16 @@ var GUANQIA_DATA_NAME = "GUANQIA_DATA"
 @ccclass
 export default class DataMgr extends Singleton {
 
-    opSetting = {op:0,sensi:5};     //操作设置
-    gameSetting = {};               //游戏设置 
-    configGuanQiaData:any = null;   //关卡配置数据
-    guanQiaData:any = null;         //玩家关卡保存数据
-    configMonsterData:any = null;   //怪物保配置数据
-    configManData:any = null;       //平民配置数据
-    configFortData:any = null;      //堡垒配置数据
-    configSupplyData:any = null;    //补给配置数据
-    configUmonsters:any = null;     //怪物集配置数据
-    configMovePosUtil:any = null;   //移动坐标集配置数据
+    public opSetting = {op:0,sensi:5};     //操作设置
+    public gameSetting = {};               //游戏设置 
+    public configGuanQiaData:any = null;   //关卡配置数据
+    public guanQiaData:any = null;         //玩家关卡保存数据
+    public configMonsterData:any = null;   //怪物保配置数据
+    public configManData:any = null;       //平民配置数据
+    public configFortData:any = null;      //堡垒配置数据
+    public configSupplyData:any = null;    //补给配置数据
+    public configUmonsters:any = null;     //怪物集配置数据
+    public configMovePosUtil:any = null;   //移动坐标集配置数据
 
     constructor() {
         super();

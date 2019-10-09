@@ -10,10 +10,11 @@
 
 const {ccclass, property} = cc._decorator;
 
+import BaseComponent from '../Base/BaseComponent';
 import MsgBox from '../Common/MsgBox'
 
 @ccclass
-export default class Login extends cc.Component {
+export default class Login extends BaseComponent {
 
     @property(cc.Node)
     icon: cc.Node = null;

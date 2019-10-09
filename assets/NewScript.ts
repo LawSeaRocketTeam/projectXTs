@@ -10,29 +10,22 @@
 
 const {ccclass, property} = cc._decorator;
 
-import BaseComponent from '../Base/BaseComponent';
-import DataMgr from '../Base/DataMgr';
-import MsgBox from '../Common/MsgBox';
-
 @ccclass
-export default class TestSetting extends BaseComponent {
-    
-    @property(cc.EditBox)
-    editBox: cc.EditBox = null;
-    
+export default class NewClass extends cc.Component {
+
+    @property(cc.Label)
+    label: cc.Label = null;
+
+    @property
+    text: string = 'hello';
+
+    // LIFE-CYCLE CALLBACKS:
+
+    // onLoad () {}
+
     start () {
 
     }
 
     // update (dt) {}
-
-    public onTestClick(_event,_customEventData){
-        let id : number = parseInt(this.editBox.string);
-        DataMgr.getInstance().cmdGuanQiaSave(id);
-        MsgBox.getInstance().show(this.node,"设置成功");
-    }
-
-    public onCloseClick(_event,_customEventData){
-        this.node.active = false;
-    }
 }
