@@ -105,6 +105,10 @@ export default class DataMgr extends Singleton {
         });
     }
     
+    public getGuanQiaData():any{
+        return this.guanQiaData;
+    }
+
     //存储操作模式
     public saveOpSetting(_op:number,_sensi:number){
         this.opSetting.op = _op;

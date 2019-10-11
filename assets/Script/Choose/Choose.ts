@@ -1,31 +1,35 @@
-//房间脚本
+import BaseComponent from "../Base/BaseComponent";
+import DataMgr from '../Base/DataMgr';
+import MsgBox from '../Common/MsgBox'
 
-cc.Class({
-    extends: cc.Component,
+const {ccclass, property} = cc._decorator;
 
-    properties: {
-        pageView : cc.PageView,
-    },
+@ccclass
+export default class Choose extends BaseComponent {
 
+    @property(cc.PageView)
+    pageView: cc.PageView = null;
+
+    rpMgr:any = null;   //ChoosePageViewMgr
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
         this.rpMgr = this.pageView.getComponent("ChoosePageViewMgr")
-    },
+    }
 
     onEnable(){
         this.refreshPageView();
         this.pageView.scrollToTop();
-    },
+    }
 
     start () {
-       
-    },
+
+    }
 
     //刷新页面
-    refreshPageView : function(){
+    public refreshPageView(){
         this.pageView.removeAllPages();
-        let data = cc.vv.dataMgr.guanQiaData;
+        let data = DataMgr.getInstance().getGuanQiaData();
         for(let i = 0; i < data.length; i++)
         {
             let util = data[i];
@@ -40,15 +44,15 @@ cc.Class({
             }
         }
         //滚动到最新页
-        this.pageView.scrollToPage(data.length - 1);
-    },
+        this.pageView.scrollToPage(data.length - 1,0.1);
+    }
 
     //检测是否能开启下一个集合
     //所有关卡都通过并且达到一定的星星数
-    checkIsCanOpenNextUtils : function(){
+    public checkIsCanOpenNextUtils(){
         //获取当前页签
         let idx = this.pageView.getCurrentPageIndex();
-        let data = cc.vv.dataMgr.guanQiaData;
+        let data = DataMgr.getInstance().getGuanQiaData();
         let curUtil = data[idx];
         let starCount = 0;
         for(let j = 0; j < curUtil.length; j++){
@@ -60,13 +64,13 @@ cc.Class({
         if(starCount < 18)//先随便写个数，之后跟配置
             return false;
         return true;
-    },
+    }
 
-    onUnLockClick : function(event, customEventData){
+    public onUnLockClick(event:any, customEventData:any){
         let idx = this.pageView.getCurrentPageIndex()+2;
         if(this.checkIsCanOpenNextUtils()){
             //添加新的集合，隐藏当前页面锁
-            if(cc.vv.dataMgr.addGuanQiaUtil(idx))
+            if(DataMgr.getInstance().addGuanQiaUtil(idx))
                 this.refreshPageView();
         }
         else{
@@ -75,20 +79,21 @@ cc.Class({
             //     cc.log("点击事件测试")
             // };
             // cc.vv.msgBox.show(this.node,cc.vv.i18n.t("mb_more_star"),"测试","确定",sureFunc);
-            cc.vv.msgBox.show(this.node,cc.vv.i18n.t("mb_more_star"));
+            MsgBox.getInstance().show(this.node,cc.vv.i18n.t("mb_more_star"));
         }
-    },
+    }
 
-    OnPageViewItemClick: function(event,customEventData){
+    public OnPageViewItemClick(event:any, customEventData:any){
         //cc.log("OnPageViewItemClick :" + customEventData);
-        let id = customEventData
+        let id:number = parseInt(customEventData)
         cc.vv.sceneParam.gameMode = "guanka";
         cc.vv.sceneParam.id = id;
         cc.director.loadScene("gameScene");
-    },
+    }
 
-    onBackClick : function(event, customEventData){
+    public onBackClick(event:any, customEventData:any){
         this.node.active = false;
     }
-    // update (dt) {},
-});
+
+    // update (dt) {}
+}

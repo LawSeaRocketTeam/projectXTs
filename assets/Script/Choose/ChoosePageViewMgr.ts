@@ -1,34 +1,42 @@
-//房间pageview页面管理器
+import BaseComponent from "../Base/BaseComponent";
 
-cc.Class({
-    extends: cc.Component,
+const {ccclass, property} = cc._decorator;
 
-    properties: {
-        item_prefab:{  //项的资源预制体
-            type:cc.Prefab,
-            default:null,
-        },
-        chooseNode : cc.Node,
-        starSpFrame:cc.SpriteFrame,
-        starDiSpFrame:cc.SpriteFrame,
-        MAX_COLOUM:5,        //列数
-        MAX_PAGE_COUNT:10,       //每页可显示最多个数
-        GAP_W:30,               //格子宽间距
-        GAP_H:50,              //格子高间距
-    },
+@ccclass
+export default class ChoosePageViewMgr extends BaseComponent {
+
+    @property(cc.Prefab)
+    item_prefab: cc.Prefab = null;
+    @property(cc.Node)
+    chooseNode : cc.Node = null;
+    @property(cc.SpriteFrame)
+    starSpFrame : cc.SpriteFrame = null;
+    @property(cc.SpriteFrame)
+    starDiSpFrame : cc.SpriteFrame = null;
+    @property
+    MAX_COLOUM : number = 5;
+    @property
+    MAX_PAGE_COUNT : number = 10;
+    @property
+    GAP_W : number = 30;
+    @property
+    GAP_H : number = 50;
+
+    content:cc.Node = null
+    itemList:any[] = [];
+    pageCount:number = 0;
 
     // LIFE-CYCLE CALLBACKS:
 
-    onLoad () {
-        this.content = cc.find("view/content",this.node);
-        this.itemList = []
-        this.pageCount = 0
-    },
+    // onLoad () {}
 
     start () {
+        this.content = cc.find("view/content",this.node);
+        this.itemList = [];
+        this.pageCount = 0;
+    }
 
-    },
-
+    // update (dt) {}
     /*
         Func: 添加item
         p1:显示类型，1.开启状态 2.关闭状态
@@ -37,7 +45,7 @@ cc.Class({
         p4:集合下标
         p5:关卡下标
     */
-    addItem : function(_type,_content,_starLevel,_uIdx,_gIdx){
+    public addItem(_type:number,_content:string,_starLevel:number,_uIdx:number,_gIdx:number){
         
         let itemPrefab = cc.instantiate(this.item_prefab);
         let label = cc.find("bg/l_guanqia",itemPrefab)
@@ -54,18 +62,18 @@ cc.Class({
             label.active = true
             node_star.active = true
             label.getComponent(cc.Label).string = _content
-           // let spFrameStar = new cc.SpriteFrame(cc.url.raw("resources/SceneRes/Choose/star.png"));
-           // let spFrameStarDi = new cc.SpriteFrame(cc.url.raw("resources/SceneRes/Choose/xignxing_di.png"));
+            // let spFrameStar = new cc.SpriteFrame(cc.url.raw("resources/SceneRes/Choose/star.png"));
+            // let spFrameStarDi = new cc.SpriteFrame(cc.url.raw("resources/SceneRes/Choose/xignxing_di.png"));
             for(let i = 1; i <= 3; i++){
                 let spStar = cc.find("star" + i,node_star).getComponent(cc.Sprite);
                 if(i <= _starLevel){
-                   // cc.loader.loadRes("SceneRes/Choose/star",cc.SpriteFrame,function(err,spriteFrame){
-                        spStar.spriteFrame = this.starSpFrame;
+                    // cc.loader.loadRes("SceneRes/Choose/star",cc.SpriteFrame,function(err,spriteFrame){
+                    spStar.spriteFrame = this.starSpFrame;
                     //});
                 }
                 else{
                     //cc.loader.loadRes("SceneRes/Choose/xignxing_di",cc.SpriteFrame,function(err,spriteFrame){
-                        spStar.spriteFrame = this.starDiSpFrame;
+                    spStar.spriteFrame = this.starDiSpFrame;
                     //});
                 }
             }
@@ -88,7 +96,7 @@ cc.Class({
             if(lockNode != undefined){
                 lockNode.active = false
             }
-            //
+             //
             let pageItem = cc.find("pageItem",this.node)
             let newPage = cc.instantiate(pageItem)
             //创建新页面
@@ -124,17 +132,15 @@ cc.Class({
         //cc.log("width = " + itemPrefab.width  + " height = " + itemPrefab.height)
         let posX = initPosX + (itemWidth + gapW) * (col - 1)
         let posY = initPosY - (itemHeight + gapH) * (row - 1)
-       // cc.log("posX = " + posX + " posY = " + posY)
+        // cc.log("posX = " + posX + " posY = " + posY)
         itemPrefab.setPosition(cc.v2(posX,posY))
         //添加点击事件
         let clickEventHandler = new cc.Component.EventHandler();
         clickEventHandler.target = this.chooseNode;
         clickEventHandler.component = "Choose";
         clickEventHandler.handler = "OnPageViewItemClick";
-        clickEventHandler.customEventData = cfgId;
+        clickEventHandler.customEventData = cfgId.toString();
         let button = itemPrefab.getComponent(cc.Button);
         button.clickEvents.push(clickEventHandler);
     }
-
-    // update (dt) {},
-});
+}

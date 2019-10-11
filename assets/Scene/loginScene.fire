@@ -162,7 +162,7 @@
     "_level": 1,
     "_components": [
       {
-        "__id__": 170
+        "__id__": 169
       }
     ],
     "_prefab": null,
@@ -246,7 +246,7 @@
       "__type__": "cc.Vec3",
       "x": 0,
       "y": 0,
-      "z": 526.5434455009387
+      "z": 561.1844616523163
     },
     "_scale": {
       "__type__": "cc.Vec3",
@@ -340,7 +340,7 @@
         "__id__": 52
       }
     ],
-    "_active": true,
+    "_active": false,
     "_level": 1,
     "_components": [
       {
@@ -5698,14 +5698,11 @@
         "__id__": 163
       }
     ],
-    "_active": false,
+    "_active": true,
     "_level": 1,
     "_components": [
       {
         "__id__": 168
-      },
-      {
-        "__id__": 169
       }
     ],
     "_prefab": null,
@@ -5823,7 +5820,11 @@
       "__id__": 135
     },
     "_enabled": true,
-    "_materials": [],
+    "_materials": [
+      {
+        "__uuid__": "eca5d2f2-8ef6-41c2-bbe6-f9c79d09c432"
+      }
+    ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
@@ -6574,7 +6575,11 @@
       "__id__": 151
     },
     "_enabled": true,
-    "_materials": [],
+    "_materials": [
+      {
+        "__uuid__": "eca5d2f2-8ef6-41c2-bbe6-f9c79d09c432"
+      }
+    ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
@@ -6782,7 +6787,11 @@
       "__id__": 154
     },
     "_enabled": true,
-    "_materials": [],
+    "_materials": [
+      {
+        "__uuid__": "eca5d2f2-8ef6-41c2-bbe6-f9c79d09c432"
+      }
+    ],
     "_spriteFrame": null,
     "_type": 0,
     "_segments": 64,
@@ -7035,7 +7044,11 @@
       "__id__": 163
     },
     "_enabled": true,
-    "_materials": [],
+    "_materials": [
+      {
+        "__uuid__": "eca5d2f2-8ef6-41c2-bbe6-f9c79d09c432"
+      }
+    ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
@@ -7188,19 +7201,6 @@
     "_originalWidth": 1024,
     "_originalHeight": 768,
     "_id": "12F+oJ0zRIb4CS9bFYvauq"
-  },
-  {
-    "__type__": "63689fzCzxIfLrngGpf9Oza",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 134
-    },
-    "_enabled": true,
-    "pageView": {
-      "__id__": 160
-    },
-    "_id": "71oScZhqJOTZ9FcPsxOMy2"
   },
   {
     "__type__": "cc.Canvas",
