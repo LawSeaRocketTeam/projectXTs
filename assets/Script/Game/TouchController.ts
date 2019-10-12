@@ -1,34 +1,34 @@
-// Learn cc.Class:
-//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/class.html
-//  - [English] http://docs.cocos2d-x.org/creator/manual/en/scripting/class.html
-// Learn Attribute:
-//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/reference/attributes.html
-//  - [English] http://docs.cocos2d-x.org/creator/manual/en/scripting/reference/attributes.html
-// Learn life-cycle callbacks:
-//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
-//  - [English] https://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
+import BaseComponent from "../Base/BaseComponent";
 
-cc.Class({
-    extends: cc.Component,
+const {ccclass, property} = cc._decorator;
 
-    properties: {
-        moveTouchNode : cc.Node,
-        shootNode:cc.Node,
-        spBg : cc.Node,
-        moveSensi : 2,      //移动灵敏度
-        shootAudio: {
-            default: null,
-            type: cc.AudioClip
-        },
-    },
+@ccclass
+export default class TouchController extends BaseComponent {
+
+    @property(cc.Node)
+    moveTouchNode : cc.Node = null;
+    @property(cc.Node)
+    shootNode : cc.Node = null;
+    @property(cc.Node)
+    spBg : cc.Node = null;
+    @property
+    moveSensi : number = 2;
+    @property(cc.AudioClip)
+    shootAudio : cc.AudioClip = null;
+
+    public isMoving : Boolean = false;
 
     // LIFE-CYCLE CALLBACKS:
+
+    start () {
+
+    }
 
     onLoad () {
         var self = this;
         var canvas  = cc.find("Canvas");
         // var winSize = canvas.getComponent(cc.Canvas).winSize;
-        var winSize = cc.winSize;
+       // var winSize = cc.winSize;
         var mapMgr = canvas.getComponent("MapMgr");
         var spBgSize = cc.size(mapMgr.max_w,mapMgr.max_h);
         this.moveSensi = 0.4 * cc.vv.dataMgr.opSetting.sensi;
@@ -75,11 +75,12 @@ cc.Class({
         // self.shootTouchNode.on('click',function(){
         //     console.log("shootTouchNode click");
         // },self)
-    },
+    }
 
-    onShootCallBack: function(_event, customEventData)  {
+    public onShootCallBack(_event:any, customEventData:any)  {
         this.shootNode.getComponent("ShootController").shootTarget();
         cc.audioEngine.playEffect(this.shootAudio,false);
-    },
-    // update (dt) {},
-});
+    }
+
+    // update (dt) {}
+}

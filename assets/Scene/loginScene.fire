@@ -162,7 +162,7 @@
     "_level": 1,
     "_components": [
       {
-        "__id__": 169
+        "__id__": 170
       }
     ],
     "_prefab": null,
@@ -246,7 +246,7 @@
       "__type__": "cc.Vec3",
       "x": 0,
       "y": 0,
-      "z": 561.1844616523163
+      "z": 535.2036995387831
     },
     "_scale": {
       "__type__": "cc.Vec3",
@@ -340,7 +340,7 @@
         "__id__": 52
       }
     ],
-    "_active": false,
+    "_active": true,
     "_level": 1,
     "_components": [
       {
@@ -5698,11 +5698,14 @@
         "__id__": 163
       }
     ],
-    "_active": true,
+    "_active": false,
     "_level": 1,
     "_components": [
       {
         "__id__": 168
+      },
+      {
+        "__id__": 169
       }
     ],
     "_prefab": null,
@@ -6388,7 +6391,7 @@
       "__id__": 134
     },
     "component": "",
-    "_componentId": "63689fzCzxIfLrngGpf9Oza",
+    "_componentId": "ff0a3YwjDxGvp6K+lnQDm1H",
     "handler": "onUnLockClick",
     "customEventData": ""
   },
@@ -6947,7 +6950,7 @@
     "_id": "37DanfHlRLyJQZl+0Qk+VJ"
   },
   {
-    "__type__": "45782TuGVJAlbrmwibhiwAz",
+    "__type__": "9f484UnoKZAx7Oc+KOK1dNo",
     "_name": "",
     "_objFlags": 0,
     "node": {
@@ -6969,8 +6972,8 @@
     "MAX_COLOUM": 5,
     "MAX_PAGE_COUNT": 10,
     "GAP_W": 30,
-    "GAP_H": 100,
-    "_id": "12N7T1U45PSoAMZSFYEaSq"
+    "GAP_H": 50,
+    "_id": "14Wj0isepPKZ/3J9kyXCw1"
   },
   {
     "__type__": "cc.Node",
@@ -7144,7 +7147,7 @@
       "__id__": 134
     },
     "component": "",
-    "_componentId": "63689fzCzxIfLrngGpf9Oza",
+    "_componentId": "ff0a3YwjDxGvp6K+lnQDm1H",
     "handler": "onBackClick",
     "customEventData": ""
   },
@@ -7201,6 +7204,19 @@
     "_originalWidth": 1024,
     "_originalHeight": 768,
     "_id": "12F+oJ0zRIb4CS9bFYvauq"
+  },
+  {
+    "__type__": "ff0a3YwjDxGvp6K+lnQDm1H",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 134
+    },
+    "_enabled": true,
+    "pageView": {
+      "__id__": 160
+    },
+    "_id": "26R3fjedZGlrGZSSRxtcKK"
   },
   {
     "__type__": "cc.Canvas",

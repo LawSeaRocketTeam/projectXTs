@@ -1,21 +1,25 @@
-// Learn cc.Class:
-//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/class.html
-//  - [English] http://docs.cocos2d-x.org/creator/manual/en/scripting/class.html
-// Learn Attribute:
-//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/reference/attributes.html
-//  - [English] http://docs.cocos2d-x.org/creator/manual/en/scripting/reference/attributes.html
-// Learn life-cycle callbacks:
-//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
-//  - [English] https://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
+import BaseComponent from "../Base/BaseComponent";
+import TargetsMgr from "./TargetsMgr";
 
-cc.Class({
-    extends: cc.Component,
+const {ccclass, property} = cc._decorator;
 
-    properties: {
-        radius:30,
-        spBg:cc.Node,
-    },
+@ccclass
+export default class ShootControl extends BaseComponent {
 
+    @property
+    radius: number = 30;
+    @property(cc.Node)
+    spBg: cc.Node = null;
+    
+    targetsMgr : TargetsMgr = null;
+    shootCount : number = 0;    //射击次数
+    hitCount : number = 0;      //命中次数
+    comboCount : number = 0;    //连击次数
+    comboMaxCount : number = 0; //最大连击次数
+    killTargetCount : number = 0;   //杀敌数
+    reactionTime : number[] = [];   //最长反应时间
+    perfectShootCount : number = 0; //完美设计次数
+    canShoot : Boolean = true;  //是否能够进行射击
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
@@ -35,13 +39,13 @@ cc.Class({
         g.lineTo(0, r);
         g.stroke();
         g.close();
-    },
+    }
 
     start () {
         this.refresh();
-    },
+    }
 
-    refresh : function(){
+    public refresh(){
         this.shootCount = 0;    //射击次数
         this.hitCount = 0;      //命中次数
         this.comboCount = 0;    //连击次数
@@ -50,19 +54,19 @@ cc.Class({
         this.reactionTime = [];   //最长反应时间
         this.perfectShootCount = 0; //完美设计次数
         this.canShoot = true;  //是否能够进行射击
-    },
+    }
 
     //获取当前射击点在地图上的位置
-    getShootPoint : function(){
+    public getShootPoint(){
         //先把标靶节点转换成世界坐标
         let posWorld = this.node.convertToWorldSpaceAR(this.node.position);
         //把世界坐标转换成在spBG上的坐标
         let posConverSpBg = this.spBg.convertToNodeSpaceAR(posWorld);
         return posConverSpBg;
-    },
+    }
 
     //射击
-    shootTarget : function(){
+    public shootTarget(){
         if(!this.canShoot)
             return
         //检测射击点是否在目标内
@@ -83,28 +87,28 @@ cc.Class({
            this.comboCount = 0
        }
        cc.vv.gameNode.emit("game_set_hitrate")
-    },
+    }
 
-    setCanShoot : function(_value){
+    public setCanShoot(_value:Boolean){
         this.canShoot = _value
-    },
+    }
 
     //
-    killTarget:function(){
+    public killTarget(){
         this.killTargetCount++;
 
-    },
+    }
 
-    getHitRate : function(){
+    public getHitRate(){
         if(this.shootCount != 0){
             return Math.floor(this.hitCount / this.shootCount * 100);
         }
         else{
             return 0;
         }
-    },
+    }
 
-    getReactionTime : function(){
+    public getReactionTime(){
         let sumTime = 0;
         if(this.reactionTime.length == 0){
             return 0;
@@ -116,5 +120,5 @@ cc.Class({
         return (sumTime / 1000).toFixed(2);
     }
 
-    // update (dt) {},
-});
+    // update (dt) {}
+}

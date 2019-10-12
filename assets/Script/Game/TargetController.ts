@@ -1,59 +1,68 @@
-var Common = require("../Common/Common");
-//标靶目标管理脚本
-cc.Class({
-    extends: cc.Component,
+import BaseComponent from "../Base/BaseComponent";
+import Common from "../Common/Common";
+import TargetsMgr from "./TargetsMgr";
 
-    properties: {
-        // foo: {
-        //     // ATTRIBUTES:
-        //     default: null,        // The default value will be used only when the component attaching
-        //                           // to a node for the first time
-        //     type: cc.SpriteFrame, // optional, default is typeof default
-        //     serializable: true,   // optional, default is true
-        // },
-        // bar: {
-        //     get () {
-        //         return this._bar;
-        //     },
-        //     set (value) {
-        //         this._bar = value;
-        //     }
-        // },
-        
-    },
+const {ccclass, property} = cc._decorator;
 
-    ctor: function () {
-        this.SHOW_STATUS = {
-            HIDE:0,
-            SHOW:1,
-        };
-        this.MOVE_STATUS = {
-            STOP:0,
-            MOVE:1,
-        };
-        this.SPY_STATUS = {
-            MON:0,
-            MAN:1,
-        };
-    },
+@ccclass
+export default class TargetController extends BaseComponent {
+
+    public SHOW_STATUS = {
+        HIDE:0,
+        SHOW:1,
+    }
+    public MOVE_STATUS = {
+        STOP:0,
+        MOVE:1,
+    }
+    public SPY_STATUS = {
+        MON:0,
+        MAN:1,
+    }
+    public targetsMgr : TargetsMgr = null;
+    public mapMgr : any = null;
+
+    public id:number = 0;
+    public block : any = 0;
+    public tarType:any = null;
+    public radius:number = 0;
+    public activeTime:number = 0;
+    public initTime:number = 0  //生成时间
+    public speed:number = 0;   //每秒移动速度，游戏限制30帧
+    public dirDegress:number = 0;
+    public dirVec:cc.Vec2 = cc.v2(0,0)
+    public dirChange:Boolean = false;
+    public leijiTime:number = 0; //累计存活时间
+    public hasUpdateFillRange:Boolean = false;    //是否已经进入圆倒计时
+    public fillRangeSpeed:number = 0;    //圆倒计时速度
+    public targetMon:cc.Node = null;
+    public targetTime:cc.Node = null;
+    public targetMan:cc.Node = null;
+    public showLastTime:number = 0;  //现身持续时间（适用于隐身目标）
+    public hideLastTime:number = 0; //隐身持续时间（适用于隐身目标）
+    public moveLastTime:number = 0;  //移动持续时间（适用于间歇移动目标）
+    public stopLastTime:number = 0;  //移动持续时间（适用于间歇移动目标）
+    public spyLastTime:number = 0;   //间谍移动持续时间(适用于间谍目标)
+    public manLastTime:number = 0;   //平民移动持续时间(适用于平民目标)
+    public moveArr : cc.Vec2[] = [];      //移动点数组（适用于轨迹移动目标）
+    public moveArrIdx:number = 0;    //当前执行下标
+    public showStatus:number = this.SHOW_STATUS.SHOW;
+    public moveStatus:number = this.MOVE_STATUS.MOVE;
+    public spyStatus:number = this.SPY_STATUS.MON;   //间谍类怪当前状态
+    public spTarTime:cc.Sprite = null;
+
     // LIFE-CYCLE CALLBACKS:
+    // onLoad () {}
 
-    onLoad () {
-        var canvas = cc.find("Canvas")
-        this.targetsMgr = canvas.getComponent("TargetsMgr");
-        this.mapMgr = canvas.getComponent("MapMgr");
-    },
+    //start () {}
 
-    // start () {
-
-    // },
     //Func：刷新数据
     //_tarType:目标类型
     //_position:位置
     //_activeTime:存活时间
     //_speed:移动速度
     //_direction:移动方向角度
-    refresh: function(_tarType,_position,_radius,_activeTime,_speed,_direction)
+    public refresh(_tarType:any,_position:cc.Vec2,_radius:number,_activeTime:number,_speed:number,_direction:number)
     {
         let date = new Date();
         //参数默认值
@@ -70,7 +79,7 @@ cc.Class({
         this.initTime = date.getTime()    //生成时间
         this.speed = _speed;   //每秒移动速度，游戏限制30帧
         this.dirDegress = _direction;
-        this.dirVec = Common.degreesToVectors(_direction);
+        this.dirVec = Common.getInstance().degreesToVectors(_direction);
         this.dirChange = false;
         this.leijiTime = 0; //累计存活时间
         this.hasUpdateFillRange = false;    //是否已经进入圆倒计时
@@ -93,6 +102,9 @@ cc.Class({
         this.moveStatus = this.MOVE_STATUS.MOVE;
         this.spyStatus = this.SPY_STATUS.MON;   //间谍类怪当前状态
         let circleCollider = this.getComponent(cc.CircleCollider);
+        var canvas = cc.find("Canvas")
+        this.targetsMgr = canvas.getComponent("TargetsMgr");
+        this.mapMgr = canvas.getComponent("MapMgr");
         if(_radius != undefined){
             this.node.scale = _radius / circleCollider.radius;
         }
@@ -109,44 +121,45 @@ cc.Class({
             this.targetMan.active = true;
             this.targetMon.active = false;
         }
-    },
+
+    }
 
     //设置目标ID
-    setId : function(_id){
+    public setId(_id:number){
         this.id = _id;
-    },
+    }
 
     //设置自己在地图上的哪个块区,适用于驻留目标
-    setBlock : function(_block){
+    public setBlock(_block){
         this.block = _block;
         _block.targets.push(this.node);
-    },
+    }
 
     //设置隐身和现身时长
-    setShowAndHideTime(_showTime,_hideTime){
+    public setShowAndHideTime(_showTime,_hideTime){
         this.showLastTime = _showTime;
         this.hideLastTime = _hideTime;
-    },
+    }
 
     //设置隐身和现身时长
-    setMoveAndStopTime(_moveTime,_stopTime){
+    public setMoveAndStopTime(_moveTime,_stopTime){
         this.moveLastTime = _moveTime;
         this.stopLastTime = _stopTime;
-    },
+    }
 
     //设置间谍和平民时长
-    setSpyAndManTime(_spyTime,_manTime){
+    public setSpyAndManTime(_spyTime,_manTime){
         this.spyLastTime = _spyTime;
         this.manLastTime = _manTime;
-    },
+    }
 
     //设置移动轨迹数组
-    setMoveArray(_arr){
+    public setMoveArray(_arr){
         this.moveArr = _arr;
-    },
+    }
 
     //从地图的block块中移除
-    removeFromBlock : function(){
+    public removeFromBlock(){
         if(this.block == undefined){
             return;
         }
@@ -157,10 +170,10 @@ cc.Class({
             }
         }
         this.block = undefined;
-    },
+    }
 
     //进入碰撞后触发
-    onCollisionEnter: function (other, self) {
+    public onCollisionEnter(other, self) {
 
         if(other.node.name == "spFort"){    //堡垒碰撞
             this.targetsMgr.addIdleTarget(this.node);    
@@ -216,22 +229,22 @@ cc.Class({
                 }
             }
             this.dirDegress = this.dirDegress < 360 ? this.dirDegress : this.dirDegress - 360;
-            this.dirVec = Common.degreesToVectors(this.dirDegress);
+            this.dirVec = Common.getInstance().degreesToVectors(this.dirDegress);
             this.dirChange = true;
             //console.log('on collision enter dirDegress = ' + this.dirDegress);   
         }     
-    },
+    }
 
-    onCollisionStay: function (other, self) {
-    },
+    public nCollisionStay(other, self) {
+    }
 
-    onCollisionExit: function (other, self) {
+    public onCollisionExit(other, self) {
         if(other.tag == 2)
         {
             //console.log('on collision onCollisionExit = ' + self.node.name);
             this.dirChange = false;
         }
-    },
+    }
 
     update (dt) {
         this.leijiTime += dt;
@@ -276,8 +289,8 @@ cc.Class({
             if(this.moveStatus == this.MOVE_STATUS.STOP){
                 if(this.leijiTime > this.stopLastTime){
                     this.moveStatus = this.MOVE_STATUS.MOVE;
-                    this.dirDegress = Common.seededRandom(0,360,true);//重新随机一个方向
-                    this.dirVec = Common.degreesToVectors(this.dirDegress);
+                    this.dirDegress = Common.getInstance().seededRandom(0,360,true);//重新随机一个方向
+                    this.dirVec = Common.getInstance().degreesToVectors(this.dirDegress);
                     this.leijiTime = 0;
                 }
             }
@@ -326,10 +339,10 @@ cc.Class({
                 }   
             }
         }
-    },
+    }
 
     //spTargetTime的倒计时实现
-    _updateFillRange:function(dt){
+    public _updateFillRange(dt){
         if(!this.hasUpdateFillRange){      
             var leftTime = this.activeTime - this.leijiTime;
             this.fillRangeSpeed = 1 / leftTime;
@@ -351,11 +364,11 @@ cc.Class({
                 cc.vv.gameNode.emit("event_game_jiesuan",{isSucc:false});
             }
         }
-    },
+    }
 
     //检测点是否在目标中
     //这里模拟点是一个一传入点为圆心，半径为1的圆
-    checkIsInPoint : function(_shootPoint){
+    public checkIsInPoint(_shootPoint){
         let circleCollider = this.getComponent(cc.CircleCollider);
         //两个圆是否相交，射击点用1个像素的圆
         let colliderRadius = circleCollider.radius * this.node.scale;
@@ -364,10 +377,10 @@ cc.Class({
             return true;
         }
         return false;
-    },
+    }
 
     //检测是否完美射击，靶心10个像素范围内
-    checkIsPerfect : function(_shootPoint){
+    public checkIsPerfect(_shootPoint){
         let circleCollider = this.getComponent(cc.CircleCollider);
         //两个圆是否相交，射击点用1个像素的圆
         let colliderRadius = 10;
@@ -376,10 +389,10 @@ cc.Class({
             return true;
         }
         return false;
-    },
+    }
 
     //被射击中
-    beShoot(){
+    public beShoot(){
         console.log("--------------be shoot----------------");
         if(this.tarType == Common.TargetType.SplitMove){
             //如果是分裂怪被击中，先消失，再生成两个随机怪
@@ -405,5 +418,6 @@ cc.Class({
             }
         }
         
-    },
-});
+    }
+    // update (dt) {}
+}
