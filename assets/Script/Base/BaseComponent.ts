@@ -15,34 +15,41 @@ import EventDispatcher from './EventDispatcherMgr';
 @ccclass
 export default class BaseComponent extends cc.Component {
 
-    //@property(cc.Label)
-    //label: cc.Label = null;
-
-    //@property
-    //text: string = 'hello';
-
-    // LIFE-CYCLE CALLBACKS:
-
-    // onLoad () {}
+    public vEvents:string[] = [];
+    onLoad () {
+        this.vEvents = [];
+    }
 
     //start () {
 
     //}
 
     // update (dt) {}
-
-    /**
-     *
-     */
-    constructor() {
-        super();
-    }
-
     onEnable(){
         //console.log("~~~~~~~~~~BaseComponent onEnable");
     }
 
     onDisable(){
-        EventDispatcher.getInstance().distatch();
+        //清除事件注册
+        for(let e of this.vEvents){
+            EventDispatcher.getInstance().distatch(this.node,e);
+        }
+        this.vEvents = [];
+    }
+
+    public onEvent(_event:string,_func:any,_self:any){
+        EventDispatcher.getInstance().on(this.node,_event,_func,_self);
+        //记录注册事件
+        this.pushEvent(_event);
+    }
+
+    public pushEvent(_event:string){
+        for(let e of this.vEvents){
+            if(e == _event){
+                cc.log("BaseComponent regist the same Event " + _event);
+                return;
+            }
+        }
+        this.vEvents.push(_event);
     }
 }

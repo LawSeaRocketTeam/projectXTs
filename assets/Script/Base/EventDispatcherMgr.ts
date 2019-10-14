@@ -14,16 +14,72 @@ import Singleton from './Singleton';
 
 @ccclass
 export default class EventDispatcherMgr extends Singleton{
+
+    private arrEvents : any[] = [];
+
     constructor() {
         super();
     }
 
     public init(){
-
+        this.arrEvents = [];
     }
 
-    public distatch() {
-        console.log("~~~~~~~~~~~~~~distatch");
+    public on(_node:cc.Node,_event:string,_func:any,_self:any){
+        let vEvent = this._findEvent(_event);
+        _node.on(_event,_func,_self);
+        if(vEvent == null){
+            vEvent = {event:_event,nodes:[]};
+            this.arrEvents.push(vEvent);
+        }
+        vEvent.nodes.push(_node) 
+    }
+
+    public emit(_event:string){
+        let vEvent = this._findEvent(_event);
+        if(vEvent == null){
+            cc.log("EventDispatcherMgr can't find event");
+            return;
+        }
+        for(let k in vEvent.nodes){
+            let v = vEvent.nodes[k];
+            if(v != undefined && v != null){
+                if(v.active == true)
+                    v.emit(_event);
+            }
+        }
+    }
+
+    public distatch(_node:cc.Node,_event:string) {
+        let vEvent = this._findEvent(_event);
+        for(let k in vEvent.nodes){
+            let v = vEvent.nodes[k];
+            if(v == _node){
+                vEvent.nodes.splice(k,1);
+                break;
+            }  
+        }
+        if(vEvent.nodes.length == 0){
+            this._removeEvent(_event);
+        }
+    }
+
+    private _findEvent(_event:string){
+        for(let k in this.arrEvents){
+            let v = this.arrEvents[k];
+            if(v.event == _event){
+                return v;
+            }
+        }
+        return null;
+    }
+
+    private _removeEvent(_event:string){
+        this.arrEvents.forEach(function(item, index, arr) {
+            if(item.event == _event) {
+                arr.splice(index, 1);
+            }
+        });
     }
 
     // update (dt) {}
