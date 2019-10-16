@@ -86,7 +86,8 @@ export default class ShootControl extends BaseComponent {
        else{
            this.comboCount = 0
        }
-       cc.vv.gameNode.emit("game_set_hitrate")
+       //cc.vv.gameNode.emit("game_set_hitrate")
+       this.emitEvent("game_set_hitrate");
     }
 
     public setCanShoot(_value:Boolean){

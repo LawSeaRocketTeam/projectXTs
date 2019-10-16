@@ -361,7 +361,8 @@ export default class TargetController extends BaseComponent {
                 //this.node.removeFromParent();
                 this.targetsMgr.addIdleTarget(this.node);
                 //出发游戏结束
-                cc.vv.gameNode.emit("event_game_jiesuan",{isSucc:false});
+                //cc.vv.gameNode.emit("event_game_jiesuan",{isSucc:false});
+                this.emitEvent("event_game_jiesuan",{isSucc:false});
             }
         }
     }
@@ -405,7 +406,8 @@ export default class TargetController extends BaseComponent {
             this.targetsMgr.addBeKillId(this.id);   //这个不要放在动画结束后调用，因为外部需要及时知道当前是否已经被击杀
             var finished = cc.callFunc(function () {
                 this.targetsMgr.addIdleTarget(this.node);
-                cc.vv.gameNode.emit("game_kill_target",{monsterId:this.id});
+                //cc.vv.gameNode.emit("game_kill_target",{monsterId:this.id});
+                this.emitEvent("game_kill_target",{monsterId:this.id});
             }, this, "");
             var myAction = cc.sequence(cc.blink(0.3,2),cc.fadeOut(0.5), finished);
             this.node.runAction(myAction);
@@ -413,7 +415,8 @@ export default class TargetController extends BaseComponent {
             {
                 //射中平民或者平民状态下的间谍怪，游戏结束
                 setTimeout(function() {
-                    cc.vv.gameNode.emit("event_game_jiesuan",{isSucc:false});
+                    //cc.vv.gameNode.emit("event_game_jiesuan",{isSucc:false});
+                    this.emitEvent("event_game_jiesuan",{isSucc:false});
                 }, 800);
             }
         }

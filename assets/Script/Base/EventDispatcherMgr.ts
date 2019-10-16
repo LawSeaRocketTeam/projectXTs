@@ -35,7 +35,7 @@ export default class EventDispatcherMgr extends Singleton{
         vEvent.nodes.push(_node) 
     }
 
-    public emit(_event:string){
+    public emit(_event:string,_param:any = null){
         let vEvent = this._findEvent(_event);
         if(vEvent == null){
             cc.log("EventDispatcherMgr can't find event");
@@ -45,7 +45,7 @@ export default class EventDispatcherMgr extends Singleton{
             let v = vEvent.nodes[k];
             if(v != undefined && v != null){
                 if(v.active == true)
-                    v.emit(_event);
+                    v.emit(_event,_param);
             }
         }
     }

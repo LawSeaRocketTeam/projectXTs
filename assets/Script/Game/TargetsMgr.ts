@@ -57,7 +57,8 @@ export default class TargetsMgr extends BaseComponent {
             }
         });
         if(this.use_targets.length == 0){
-            cc.vv.gameNode.emit("game_all_targets_clear");
+            //cc.vv.gameNode.emit("game_all_targets_clear");
+            this.emitEvent("game_all_targets_clear");
         }
         
     }

@@ -36,10 +36,7 @@ export default class Common extends Singleton {
     }
 
     //真随机
-    public seededRandom(min:number, max:number,_isInt:boolean) : number {
-        max = max || 1;
-        min = min || 0;
-        _isInt = _isInt || false;
+    public seededRandom(min:number = 0, max:number = 1,_isInt:boolean = false) : number {
         let seed = new Date().getTime();
         seed = (seed * 9301 + 49297) % 233280;
         let rnd = seed / 233280.0;

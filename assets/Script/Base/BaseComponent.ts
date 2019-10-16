@@ -30,11 +30,19 @@ export default class BaseComponent extends cc.Component {
     }
 
     onDisable(){
+        
+    }
+
+    onDestroy(){
         //清除事件注册
         for(let e of this.vEvents){
             EventDispatcher.getInstance().distatch(this.node,e);
         }
         this.vEvents = [];
+    }
+
+    public emitEvent(_event:string,_param:any = null){
+        EventDispatcher.getInstance().emit(_event,_param);
     }
 
     public onEvent(_event:string,_func:any,_self:any){

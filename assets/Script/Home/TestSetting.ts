@@ -27,9 +27,10 @@ export default class TestSetting extends BaseComponent {
     // update (dt) {}
 
     public onTestClick(_event,_customEventData){
-        let id : number = parseInt(this.editBox.string);
-        DataMgr.getInstance().cmdGuanQiaSave(id);
-        MsgBox.getInstance().show(this.node,"设置成功");
+        //let id : number = parseInt(this.editBox.string);
+       // DataMgr.getInstance().cmdGuanQiaSave(id);
+       // MsgBox.getInstance().show(this.node,"设置成功");
+       this.emitEvent("login_test");
     }
 
     public onCloseClick(_event,_customEventData){

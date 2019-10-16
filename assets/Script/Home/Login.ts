@@ -71,12 +71,13 @@ export default class Login extends BaseComponent {
     }
 
     public onTestSettingClick(event:any, customEventData:any){
+        this.node.active = false
         this.testSettingLayer.active = true;
     }
 
     public onAdTestClick(event:any, customEventData:any){
-        //cc.vv.adMgr.showRewardedVideo();
-        console.log("onAdTestClick");
+        cc.vv.adMgr.showRewardedVideo();
+        //console.log("onAdTestClick");
     }
 
 
