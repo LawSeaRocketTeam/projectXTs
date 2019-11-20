@@ -1,6 +1,7 @@
 import BaseComponent from "../Base/BaseComponent";
 import DataMgr from '../Base/DataMgr';
 import MsgBox from '../Common/MsgBox'
+import GlobalMgr from "../Base/GlobalMgr";
 
 const {ccclass, property} = cc._decorator;
 
@@ -86,8 +87,8 @@ export default class Choose extends BaseComponent {
     public OnPageViewItemClick(event:any, customEventData:any){
         //cc.log("OnPageViewItemClick :" + customEventData);
         let id:number = parseInt(customEventData)
-        cc.vv.sceneParam.gameMode = "guanka";
-        cc.vv.sceneParam.id = id;
+        GlobalMgr.getInstance().sceneParam.gameMode = "guanka";
+        GlobalMgr.getInstance().sceneParam.id = id;
         cc.director.loadScene("gameScene");
     }
 

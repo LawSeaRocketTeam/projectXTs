@@ -1,4 +1,6 @@
 import BaseComponent from "../Base/BaseComponent";
+import GlobalMgr from "../Base/GlobalMgr";
+import DataMgr from "../Base/DataMgr";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -44,11 +46,11 @@ export default class JieSuan extends BaseComponent {
 
     public showJieSuan(_isSucc:boolean,_guanId:number){
         this.node.active = true;
-        let gqCfgData = cc.vv.dataMgr.getGuanQiaCfgDataById(_guanId);
+        let gqCfgData = DataMgr.getInstance().getGuanQiaCfgDataById(_guanId);
         if(_isSucc){
             this.lbName.string = cc.vv.i18n.t("js_success");
             this.nCoin.active = true;
-            if(cc.vv.dataMgr.checkGuanQiaIsPassBefore(_guanId))
+            if(DataMgr.getInstance().checkGuanQiaIsPassBefore(_guanId))
                 this.lbCoin.string = (gqCfgData.goldAward * 0.1).toString();
             else
             this.lbCoin.string = gqCfgData.goldAward;
@@ -77,7 +79,7 @@ export default class JieSuan extends BaseComponent {
     public onNextClick(event:any, customEventData:any){
         this.node.active = false;
         //获取下一关Id，并全局设置
-        cc.vv.sceneParam.id = cc.vv.dataMgr.getNextGuanQiaIdById(cc.vv.sceneParam.id)
+        GlobalMgr.getInstance().sceneParam.id = DataMgr.getInstance().getNextGuanQiaIdById(GlobalMgr.getInstance().sceneParam.id)
         //cc.vv.gameNode.emit("game_refresh");
         this.emitEvent("game_refresh");
     }

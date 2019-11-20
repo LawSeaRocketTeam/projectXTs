@@ -1,4 +1,5 @@
 import BaseComponent from "../Base/BaseComponent";
+import DataMgr from "../Base/DataMgr";
 
 const {ccclass, property} = cc._decorator;
 
@@ -18,7 +19,7 @@ export default class FortController extends BaseComponent {
 
     public init(_id:number){
         this.id = _id;
-        this.cfgFortData = cc.vv.dataMgr.getFortCfgDataById(_id);
+        this.cfgFortData = DataMgr.getInstance().getFortCfgDataById(_id);
         this.hp = this.cfgFortData.fortHp;
         let arrPos = this.cfgFortData.fortPos.split(',');
         let pos = cc.v2(arrPos[0],arrPos[1]);

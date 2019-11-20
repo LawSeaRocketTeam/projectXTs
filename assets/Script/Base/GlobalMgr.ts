@@ -14,7 +14,10 @@ import DataMgr from './DataMgr';
 
 @ccclass
 export default class GlobalMgr extends cc.Component {
-    //定义一个单例
+
+    public sceneParam = {id:0,gameMode:"",showLayer:""}; //存储游戏全局的东西
+
+    //定义一个单例    
     private static instance: GlobalMgr;
     static getInstance (): GlobalMgr {
         if (!GlobalMgr.instance) {
@@ -22,6 +25,8 @@ export default class GlobalMgr extends cc.Component {
         }
         return this.instance
     }
+
+
     // LIFE-CYCLE CALLBACKS:
 
      onLoad () {

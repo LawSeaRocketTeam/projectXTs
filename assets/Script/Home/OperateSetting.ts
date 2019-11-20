@@ -13,6 +13,7 @@ const {ccclass, property} = cc._decorator;
 import BaseComponent from '../Base/BaseComponent';
 import DataMgr from '../Base/DataMgr';
 import MsgBox from '../Common/MsgBox';
+import GlobalMgr from '../Base/GlobalMgr';
 
 @ccclass
 export default class OperateSetting extends BaseComponent {
@@ -90,7 +91,7 @@ export default class OperateSetting extends BaseComponent {
     }
 
     public onTestClick(event,customEventData){
-        cc.vv.sceneParam.gameMode = "test";
+        GlobalMgr.getInstance().sceneParam.gameMode = "test";
         this._save();
         cc.director.loadScene("gameScene");
     }

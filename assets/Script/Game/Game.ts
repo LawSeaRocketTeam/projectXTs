@@ -4,6 +4,7 @@ import ShootControl from "./ShootController";
 import MapMgr from "./MapMgr";
 import DataMgr from "../Base/DataMgr";
 import Common from "../Common/Common";
+import GlobalMgr from "../Base/GlobalMgr";
 
 // Learn TypeScript:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
@@ -312,7 +313,7 @@ export default class Game extends BaseComponent {
     //判断是否达到胜利条件
     //p1:是否发送结算
     private _isWin(_isEmit:boolean = true) : boolean{
-        if(cc.vv.sceneParam.gameMode == "test")
+        if(GlobalMgr.getInstance().sceneParam.gameMode == "test")
             return;
         if(_isEmit == undefined)
             _isEmit = true;
@@ -428,7 +429,7 @@ export default class Game extends BaseComponent {
 
     //初始化关卡数据,优先于INITGame调用
     private _initTaskData(){
-        this.guanQiaId = cc.vv.sceneParam.id;
+        this.guanQiaId = GlobalMgr.getInstance().sceneParam.id;
         /** this.gqCfgData 数据结构
          *  {
             "gId": 1011,
@@ -501,13 +502,13 @@ export default class Game extends BaseComponent {
 
     //地图管理控件加载完毕
     private _mapLoadFinish(){
-        if(cc.vv.sceneParam.gameMode == "test"){
+        if(GlobalMgr.getInstance().sceneParam.gameMode == "test"){
             //为操控的游戏测试模式
             this.btNode.active = false;
             this.btBack.active = true;
             this._testGame();
         }
-        else if(cc.vv.sceneParam.gameMode == "guanka"){
+        else if(GlobalMgr.getInstance().sceneParam.gameMode == "guanka"){
             //this.btNode.active = true;
             this.btBack.active = false;
             this._initTaskData();
@@ -517,7 +518,7 @@ export default class Game extends BaseComponent {
 
     //所有目标被清空
     private _allTargetClear(){
-        if(cc.vv.sceneParam.gameMode == "test" && this.testBackClick == false){
+        if(GlobalMgr.getInstance().sceneParam.gameMode == "test" && this.testBackClick == false){
             this._testGame();
         }
         else{
@@ -539,7 +540,7 @@ export default class Game extends BaseComponent {
 
     //设置命中率,子弹数量
     private _setHitRate(){
-        if(cc.vv.sceneParam.gameMode == "test")
+        if(GlobalMgr.getInstance().sceneParam.gameMode == "test")
             return;
         this.lbHitRate.string = this.shootCtrl.getHitRate() + "%"
         //是否限制子弹,是则修改子弹数量
@@ -565,7 +566,7 @@ export default class Game extends BaseComponent {
         this.UINode.active = false;
         this.targetsMgr.removeAllTargets();
         if(param.isSucc)
-            cc.vv.dataMgr.saveGuanQiaById(this.guanQiaId)
+            DataMgr.getInstance().saveGuanQiaById(this.guanQiaId)
     }
 
     //击杀一个目标后通知
@@ -605,7 +606,7 @@ export default class Game extends BaseComponent {
     public onBackClick(event:any, customEventData:any){
         this.testBackClick = true;
         this.targetsMgr.removeAllTargets();
-        cc.vv.sceneParam.showLayer = "opSetting";
+        GlobalMgr.getInstance().sceneParam.showLayer = "opSetting";
         cc.director.loadScene("loginScene");
     }
     //--------------------------------------------------点击事件回调End----------------------------------------------

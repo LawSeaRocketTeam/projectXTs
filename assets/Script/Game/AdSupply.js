@@ -48,8 +48,9 @@ cc.Class({
             strDesc = cc.vv.i18n.t("ad_des_heart");
             cc.vv.adMgr.loadRewardedVideoAd("ca-app-pub-3940256099942544/5224354917");
         }
-        strSupply = Common.stringFormat(strSupply,_count);
-        strDesc = Common.stringFormat(strDesc,_count);
+        Common
+        strSupply = Common.getInstance().stringFormat(strSupply,_count);
+        strDesc = Common.getInstance().stringFormat(strDesc,_count);
         lbSupply.string = strSupply;
         lbDesc.string = strDesc;
     },

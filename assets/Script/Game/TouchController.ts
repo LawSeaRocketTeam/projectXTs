@@ -1,4 +1,5 @@
 import BaseComponent from "../Base/BaseComponent";
+import DataMgr from "../Base/DataMgr";
 
 const {ccclass, property} = cc._decorator;
 
@@ -31,7 +32,7 @@ export default class TouchController extends BaseComponent {
        // var winSize = cc.winSize;
         var mapMgr = canvas.getComponent("MapMgr");
         var spBgSize = cc.size(mapMgr.max_w,mapMgr.max_h);
-        this.moveSensi = 0.4 * cc.vv.dataMgr.opSetting.sensi;
+        this.moveSensi = 0.4 * DataMgr.getInstance().opSetting.sensi;
         self.moveTouchNode.on(cc.Node.EventType.TOUCH_START,function(event){
             let touches = event.getTouches();
             let touchLoc = touches[0].getLocation();
