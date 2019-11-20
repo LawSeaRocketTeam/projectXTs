@@ -7970,7 +7970,7 @@
       "__id__": 163
     },
     "component": "",
-    "_componentId": "059141LgE1K8aD6/9Rt38QB",
+    "_componentId": "3e8e5UepwBNI5y1dAMsqR//",
     "handler": "onMenuClick",
     "customEventData": ""
   },
@@ -8344,7 +8344,7 @@
       "__id__": 163
     },
     "component": "",
-    "_componentId": "059141LgE1K8aD6/9Rt38QB",
+    "_componentId": "3e8e5UepwBNI5y1dAMsqR//",
     "handler": "onNextClick",
     "customEventData": ""
   },
@@ -8718,7 +8718,7 @@
       "__id__": 163
     },
     "component": "",
-    "_componentId": "059141LgE1K8aD6/9Rt38QB",
+    "_componentId": "3e8e5UepwBNI5y1dAMsqR//",
     "handler": "onRechallengeClick",
     "customEventData": ""
   },
