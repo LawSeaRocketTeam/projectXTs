@@ -1,22 +1,69 @@
-var Common = require("../Common/Common")
-//const i18n = require('LanguageData');
+import BaseComponent from "../Base/BaseComponent";
+import TargetsMgr from "./TargetsMgr";
+import ShootControl from "./ShootController";
+import MapMgr from "./MapMgr";
+import DataMgr from "../Base/DataMgr";
+import Common from "../Common/Common";
 
-cc.Class({
-    extends: cc.Component,
+// Learn TypeScript:
+//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/typescript.html
+//  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/typescript.html
+// Learn Attribute:
+//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/reference/attributes.html
+//  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/reference/attributes.html
+// Learn life-cycle callbacks:
+//  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
+//  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-    properties: {
-        spBg : cc.Node,
-        shootNode : cc.Node,
-        initCount: 4,   //初始化生成个数
-        generateDelta:1,    //每过多长时间生成1个
-    },
+const {ccclass, property} = cc._decorator;
+
+@ccclass
+export default class Game extends BaseComponent {
+
+    @property(cc.Node)
+    spBg: cc.Node = null;
+    @property(cc.Node)
+    shootNode: cc.Node = null;
+    @property
+    initCount: number = 4;   //初始化生成个数
+    @property
+    generateDelta: number = 1;   //每过多长时间生成1个
+
+    public targetsMgr : TargetsMgr = null;
+    public shootCtrl : ShootControl = null;
+    public mapMgr : MapMgr = null;
+    public jieSuanNode : cc.Node = null;
+    public UINode : cc.Node = null;
+    public btNode : cc.Node = null;
+    public btBack : cc.Node = null;
+    public introduceNode : cc.Node = null;
+    public lbHitRate : cc.Label = null;
+    public lbLimitTime : cc.Label = null;
+    public ShootTouchLeftNode : cc.Node = null;
+    public ShootTouchRightNode : cc.Node = null;
+    public isGameInit : boolean = false
+    public isJieSuaning : boolean = false;
+    public gameLeiJiTime : number = 0;
+    public testBackClick : boolean = false;
+    public uMonsterCfgData : any[] = [];
+    public limitTime = 0;
+    public gqCfgData : any = null;
+    public taskParam : any = null;
+    public limitBullet : number = -1;
+    public lbLimitMiss : cc.Label = null;
+    public monsterRound : number = 0;
+    public fortNode : cc.Node = null;
+    public lbLimitBullet : cc.Label = null;
+    public limitMiss : number = 0;
+    public cfgFortData : any = null;
+    public guanQiaId : number = 0;
+    public uMenCfgData : any = null; //平民集配置数据
+    public uSupplyCfgData : any = null;
+
 
     // LIFE-CYCLE CALLBACKS:
+
     onLoad () {
-        //
-       // i18n.init( cc.sys.language)
-        cc.vv.gameNode = this.node;
-        //cc.game.setFrameRate(45);
         this.targetsMgr = this.getComponent("TargetsMgr");
         this.shootCtrl = this.shootNode.getComponent("ShootController");
         this.mapMgr = this.getComponent("MapMgr");
@@ -34,18 +81,16 @@ cc.Class({
         this.ShootTouchLeftNode.width = cc.winSize.width / 2;
         this.ShootTouchRightNode.width = cc.winSize.width / 2;
         //监听事件
-        this.node.on("event_game_jiesuan",this._on_game_jiesuan,this);
-        this.node.on("map_load_finish",this._mapLoadFinish,this);
-        this.node.on("game_all_targets_clear",this._allTargetClear,this);
-        this.node.on("game_set_hitrate",this._setHitRate,this);
-        this.node.on("game_kill_target",this._killTarget,this);
-        this.node.on("game_refresh",this._gameRefresh,this);
-        //cc.director.getCollisionManager().enabledDebugDraw = true;
-        //TEST模式
-    },
+        this.onEvent("event_game_jiesuan",this._on_game_jiesuan,this);
+        this.onEvent("map_load_finish",this._mapLoadFinish,this);
+        this.onEvent("game_all_targets_clear",this._allTargetClear,this);
+        this.onEvent("game_set_hitrate",this._setHitRate,this);
+        this.onEvent("game_kill_target",this._killTarget,this);
+        this.onEvent("game_refresh",this._gameRefresh,this);
+    }
 
     start () {
-        if(cc.vv.dataMgr.opSetting.op == 0){
+        if(DataMgr.getInstance().opSetting.op == 0){
             //左手准星
             this.ShootTouchLeftNode.active = true;
             this.ShootTouchRightNode.active = false;
@@ -60,20 +105,20 @@ cc.Class({
         this.spBg.position = cc.v2(0,0);
         this.gameLeiJiTime = 0;
         this.testBackClick = false;
-    },
+    }
 
     onEnable(){
-        cc.vv.curNode = this.node;
-    },
+        //cc.vv.curNode = this.node;
+    }
 
     update (dt) {
         if(this.isGameInit && !this.isJieSuaning){
             this._updateMonsters(dt);
         }
-    },
+    }
 
     //根据怪物的配置数据，对怪物的定期刷新
-    _updateMonsters : function(_dt){
+    private _updateMonsters(_dt:number){
         this.gameLeiJiTime += _dt;
         for(let k in this.uMonsterCfgData){
             let monsterData = this.uMonsterCfgData[k];
@@ -105,34 +150,34 @@ cc.Class({
                 }
             }
         }
-    },
+    }
 
-    _updateTimer : function(){
+    private _updateTimer(){
         if(this.isJieSuaning)
             return
         if(this.limitTime != undefined && this.limitTime > 0){
             this.limitTime--;
-            this.lbLimitTime.string = this.limitTime;
+            this.lbLimitTime.string = this.limitTime.toString();
             if(this.limitTime == 0){
                 if(this.gqCfgData.gTargetType != 2){
-                    cc.vv.gameNode.emit("event_game_jiesuan",{isSucc:false});
+                    this.emitEvent("event_game_jiesuan",{isSucc:false});
                 }
                 else{
 
                 }
             }
         }
-    },
+    }
 
     //刷新游戏
-    refreshGame : function(){
+    public refreshGame(){
         this.isGameInit = false;
         this.isJieSuaning = false;
         this.spBg.position = cc.v2(0,0);
         this.gameLeiJiTime = 0;
         this.limitTime = -1;
         this.limitBullet = -1;
-        this.lbLimitMiss = -1;
+        this.limitMiss = -1;
         this.monsterRound = 0; 
         this.targetsMgr.refresh();
         this.shootCtrl.refresh();
@@ -144,10 +189,10 @@ cc.Class({
         if(this.fortNode){
             this.fortNode.removeFromParent();
         }
-    },
+    }
 
     //初始化游戏
-    _initGame : function(){
+    private _initGame(){
         this.UINode.active = true;
         for(let i = 1; i < 4; i++){
             cc.find("lbLimit" + i,this.UINode).active = false
@@ -163,7 +208,7 @@ cc.Class({
             lbName.string = cc.vv.i18n.t("game_time")
             this.lbLimitTime = cc.find(path + "/lbLimitValue",this.UINode).getComponent(cc.Label);
             this.limitTime = this.gqCfgData.limitTime;
-            this.lbLimitTime.string = this.limitTime;
+            this.lbLimitTime.string = this.limitTime.toString();
             limitIdx++;
         }
         //限制子弹
@@ -175,7 +220,7 @@ cc.Class({
             lbName.string = cc.vv.i18n.t("bullet_count")
             this.lbLimitBullet = cc.find(path + "/lbLimitValue",this.UINode).getComponent(cc.Label);
             this.limitBullet = this.gqCfgData.limitBullet;
-            this.lbLimitBullet.string = this.limitBullet
+            this.lbLimitBullet.string = this.limitBullet.toString();
             limitIdx++;
         }
         //失误限制
@@ -197,10 +242,10 @@ cc.Class({
         if(this.gqCfgData.gTargetType == 4){
             this.fortNode = this.mapMgr.generateFort(this.taskParam[0])
         }
-    },
+    }
 
     //显示关卡任务介绍
-    _showTaskIntroduce : function(){
+    private _showTaskIntroduce(){
         this.introduceNode.active = true;
         this.introduceNode.opacity = 255;
         this.UINode.active = false;
@@ -210,25 +255,25 @@ cc.Class({
         let content = "";
         if(this.gqCfgData.gTargetType == 1){
             let targetId = this.taskParam[0]
-            let MonsterData = cc.vv.dataMgr.getMonsterCfgDataById(targetId);
+            let MonsterData = DataMgr.getInstance().getMonsterCfgDataById(targetId);
             let name = cc.vv.i18n.t("target" + MonsterData.monsterType);
             content = cc.vv.i18n.t("game_task_info_content1")
-            content = Common.stringFormat(content,name,this.taskParam[1]);
+            content = Common.getInstance().stringFormat(content,name,this.taskParam[1]);
             lbContent.string = content;
             content = cc.vv.i18n.t("limit_time")
             if(this.gqCfgData.limitTime > 0 ){
-                content = Common.stringFormat(content,this.gqCfgData.limitTime + cc.vv.i18n.t("second"));
+                content = Common.getInstance().stringFormat(content,this.gqCfgData.limitTime + cc.vv.i18n.t("second"));
             }
             else{
-                content = Common.stringFormat(content,'不限');
+                content = Common.getInstance().stringFormat(content,'不限');
             }
             nLimitTime.getComponent(cc.Label).string = content;
             content = cc.vv.i18n.t("limit_bullet")
             if(this.gqCfgData.limitBullet > 0 ){
-                content = Common.stringFormat(content,this.gqCfgData.limitBullet + cc.vv.i18n.t("count"));
+                content = Common.getInstance().stringFormat(content,this.gqCfgData.limitBullet + cc.vv.i18n.t("count"));
             }
             else{
-                content = Common.stringFormat(content,'不限');
+                content = Common.getInstance().stringFormat(content,'不限');
             }
             nBullet.getComponent(cc.Label).string = content;
             nLimitTime.active = true;
@@ -236,21 +281,21 @@ cc.Class({
         }
         else if(this.gqCfgData.gTargetType == 2){
             content = cc.vv.i18n.t("game_Task_info_content2")
-            content = Common.stringFormat(content,this.taskParam[0]);
+            content = Common.getInstance().stringFormat(content,this.taskParam[0]);
             lbContent.string = content;
             nLimitTime.active = false;
             nBullet.active = false;
         }
         else if(this.gqCfgData.gTargetType == 3){
             content = cc.vv.i18n.t("game_Task_info_content3")
-            content = Common.stringFormat(content,this.taskParam[0]);
+            content = Common.getInstance().stringFormat(content,this.taskParam[0]);
             lbContent.string = content;
             nLimitTime.active = false;
             nBullet.active = false;
         }
         else if(this.gqCfgData.gTargetType == 4){
             content = cc.vv.i18n.t("game_Task_info_content4")
-            content = Common.stringFormat(content,this.cfgFortData.roundCount);
+            content = Common.getInstance().stringFormat(content,this.cfgFortData.roundCount);
             lbContent.string = content;
             nLimitTime.active = false;
             nBullet.active = false;
@@ -262,11 +307,11 @@ cc.Class({
         }, this, "");
         let ac3 = cc.sequence(ac1,ac2);
         this.introduceNode.runAction(ac3)
-    },
+    }
 
     //判断是否达到胜利条件
     //p1:是否发送结算
-    _isWin : function(_isEmit){
+    private _isWin(_isEmit:boolean = true) : boolean{
         if(cc.vv.sceneParam.gameMode == "test")
             return;
         if(_isEmit == undefined)
@@ -297,28 +342,28 @@ cc.Class({
             }
         }
         if(ret && _isEmit)
-            cc.vv.gameNode.emit("event_game_jiesuan",{isSucc:true});
+            this.emitEvent("event_game_jiesuan",{isSucc:true});
         return ret
-    },
+    }
 
     //判断是否触发失败条件
-    _isLose : function(){
+    private _isLose(){
 
-    },
+    }
 
     //根据配置设置目标移动信息
-    _setTargetMovePosData : function(_tarCtrl,_monsterData){
+    private _setTargetMovePosData(_tarCtrl:any,_monsterData:any){
         let arr = [];
-        let movePosData = cc.vv.dataMgr.getMovPosCfgDataById(_monsterData.movePosID);
+        let movePosData = DataMgr.getInstance().getMovPosCfgDataById(_monsterData.movePosID);
         let startPos = movePosData.movegenPos.split(',');
         let startPosV2 = cc.v2(parseInt(startPos[0]),parseInt(startPos[1]));
         _tarCtrl.node.position = startPosV2;
         arr.push(_tarCtrl.node.position);
-        let movemidPos = movePosData.movemidPos;
-        if(movemidPos != -1){
-            let movemidPos = movemidPos.split(';');
-            for(let i in movemidPos){
-                let v = movemidPos[i];
+        let movemidPos:string = movePosData.movemidPos;
+        if(movemidPos != "-1"){
+            let arrMovemidPos = movemidPos.split(';');
+            for(let i in arrMovemidPos){
+                let v = arrMovemidPos[i];
                 let pos = String(v).split(',');
                 let posV2 = cc.v2(parseInt(pos[0]),parseInt(pos[1]));
                 arr.push(posV2);
@@ -329,9 +374,9 @@ cc.Class({
         let endPosV2 = cc.v2(parseInt(endPos[0]),parseInt(endPos[1]));
         arr.push(endPosV2);
         _tarCtrl.setMoveArray(arr);
-    },
+    }
 
-    _generateMonster : function(_monsterData,_radius){
+    private _generateMonster(_monsterData:any,_radius:number){
         if(_monsterData.monsterType == Common.TargetType.ShortTerm){
             this.mapMgr.generateTermTargetsNearShootPos(_monsterData.monsterId,_radius,1,Common.TargetType.ShortTerm,_monsterData.timer);
         }
@@ -379,10 +424,10 @@ cc.Class({
         else if(_monsterData.monsterType == Common.TargetType.AttFort){
             this.mapMgr.generateAttFortTargetNearFort(_monsterData.monsterId,_radius,_monsterData.speed,this.fortNode.position,_monsterData.movePosID,_monsterData.genPos);
         }
-    },
+    }
 
     //初始化关卡数据,优先于INITGame调用
-    _initTaskData : function(){
+    private _initTaskData(){
         this.guanQiaId = cc.vv.sceneParam.id;
         /** this.gqCfgData 数据结构
          *  {
@@ -400,7 +445,7 @@ cc.Class({
             "goldAward": 50     获得奖励
             },
          */
-        this.gqCfgData = cc.vv.dataMgr.getGuanQiaCfgDataById(this.guanQiaId);
+        this.gqCfgData = DataMgr.getInstance().getGuanQiaCfgDataById(this.guanQiaId);
         this.taskParam = this.gqCfgData.typeParam.toString().split(',');   //不同任务类型有不同的参数
         /**
          * {
@@ -435,28 +480,27 @@ cc.Class({
         if(this.gqCfgData.gTargetType == 4){
             //守护要塞模式
             this.monsterRound = 0;//怪物波数
-            this.cfgFortData = cc.vv.dataMgr.getFortCfgDataById(this.taskParam[0]);
+            this.cfgFortData = DataMgr.getInstance().getFortCfgDataById(this.taskParam[0]);
             this.cfgFortData.uMonsterId = this.cfgFortData.uMonsterId.toString().split(',');    //字符串转换成数组
-            this.uMonsterCfgData = cc.vv.dataMgr.getMonsterCfgDataByUid(this.cfgFortData.uMonsterId[this.monsterRound]); //怪物集配置数据
+            this.uMonsterCfgData = DataMgr.getInstance().getMonsterCfgDataByUid(this.cfgFortData.uMonsterId[this.monsterRound]); //怪物集配置数据
         } 
         else{
-            this.uMonsterCfgData = cc.vv.dataMgr.getMonsterCfgDataByUid(this.gqCfgData.uMonsterId); //怪物集配置数据
+            this.uMonsterCfgData = DataMgr.getInstance().getMonsterCfgDataByUid(this.gqCfgData.uMonsterId); //怪物集配置数据
         }
-        this.uMenCfgData = cc.vv.dataMgr.getMenCfgDataByUid(this.gqCfgData.uManId); //平民集配置数据
-        this.uSupplyCfgData = cc.vv.dataMgr.getSupplyCfgDataByUid(this.gqCfgData.uSupplyId);    //补给集配置数据
-        
-    },
+        this.uMenCfgData = DataMgr.getInstance().getMenCfgDataByUid(this.gqCfgData.uManId); //平民集配置数据
+        this.uSupplyCfgData = DataMgr.getInstance().getSupplyCfgDataByUid(this.gqCfgData.uSupplyId);    //补给集配置数据
+    }
 
     //操作测试
-    _testGame : function() {
+    private _testGame() {
         //生成10个长期驻守目标
         this.mapMgr.generateTermTargetsNearShootPos(10001,50,10,Common.TargetType.LongTerm,-1,0);
-    },
+    }
 
     //------------------------------------------------------------监听事件Begin-------------------------------
 
     //地图管理控件加载完毕
-    _mapLoadFinish : function(){
+    private _mapLoadFinish(){
         if(cc.vv.sceneParam.gameMode == "test"){
             //为操控的游戏测试模式
             this.btNode.active = false;
@@ -469,10 +513,10 @@ cc.Class({
             this._initTaskData();
             this._showTaskIntroduce();
         }
-    },
+    }
 
-      //所有目标被清空
-    _allTargetClear : function(){
+    //所有目标被清空
+    private _allTargetClear(){
         if(cc.vv.sceneParam.gameMode == "test" && this.testBackClick == false){
             this._testGame();
         }
@@ -483,7 +527,7 @@ cc.Class({
                 if(this.monsterRound < this.cfgFortData.roundCount){
                     //延迟修改，凸显下一波
                     this.scheduleOnce(function() {
-                        this.uMonsterCfgData = cc.vv.dataMgr.getMonsterCfgDataByUid(this.cfgFortData.uMonsterId[this.monsterRound])
+                        this.uMonsterCfgData = DataMgr.getInstance().getMonsterCfgDataByUid(this.cfgFortData.uMonsterId[this.monsterRound])
                     }.bind(this), 2);
                 }
                 else{
@@ -491,10 +535,10 @@ cc.Class({
                 }
             }
         }
-    },
+    }
 
     //设置命中率,子弹数量
-    _setHitRate : function(){
+    private _setHitRate(){
         if(cc.vv.sceneParam.gameMode == "test")
             return;
         this.lbHitRate.string = this.shootCtrl.getHitRate() + "%"
@@ -502,18 +546,18 @@ cc.Class({
         if(this.gqCfgData.limitBullet > 0){
             let leftBullet = this.limitBullet - this.shootCtrl.shootCount;
             leftBullet = leftBullet < 0 ? 0 : leftBullet;
-            this.lbLimitBullet.string = leftBullet;
+            this.lbLimitBullet.string = leftBullet.toString();
             if(leftBullet <= 0){
                 this.shootCtrl.setCanShoot(false);
                 if(leftBullet <= 0 && !this._isWin(false)){
                     //是否限制子弹，是否在成功前就已经没有子弹了
-                    cc.vv.gameNode.emit("event_game_jiesuan",{isSucc:false});
+                    this.emitEvent("event_game_jiesuan",{isSucc:false});
                 }
             }
         }
-    },
+    }
 
-    _on_game_jiesuan: function (event) {
+    private _on_game_jiesuan(event : any) {
         let param = event;
         this.isJieSuaning = true
         let jieSuanUI = this.jieSuanNode.getComponent('JieSuan');
@@ -522,11 +566,10 @@ cc.Class({
         this.targetsMgr.removeAllTargets();
         if(param.isSucc)
             cc.vv.dataMgr.saveGuanQiaById(this.guanQiaId)
-    },
-
+    }
 
     //击杀一个目标后通知
-    _killTarget : function(event){
+    private _killTarget(event : any){
         let param = event;
         this.shootCtrl.killTarget();
         if(!this._isWin()){
@@ -539,13 +582,12 @@ cc.Class({
                 }
             }
         }
-    },
+    }
 
     //刷新游戏
-    _gameRefresh : function(event){
+    private _gameRefresh(event:any){
         this.refreshGame();
-    },
-
+    }
 
      //------------------------------------------------------------监听事件End------------------------------------
 
@@ -553,19 +595,18 @@ cc.Class({
 
     //---------------------------------------------------点击事件回调begin-----------------------------------------
 
-    onRestartClick:function(event, customEventData){
+    public onRestartClick(event:any, customEventData:any){
         //this.jieSuanNode.active = false;
         //this.UINode.active = true;
         this.spBg.position = cc.v2(0,0)        
         cc.director.loadScene("loginScene");
-    },
+    }
 
-    onBackClick : function(event, customEventData){
+    public onBackClick(event:any, customEventData:any){
         this.testBackClick = true;
         this.targetsMgr.removeAllTargets();
         cc.vv.sceneParam.showLayer = "opSetting";
         cc.director.loadScene("loginScene");
-    },
-    
+    }
     //--------------------------------------------------点击事件回调End----------------------------------------------
-});
+}

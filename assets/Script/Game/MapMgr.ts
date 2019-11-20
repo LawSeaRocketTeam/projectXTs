@@ -335,7 +335,7 @@ export default class MapMgr extends BaseComponent {
     //P3：速度 像素/秒
     //p4: 围绕射击点多少像素范围内生成
     //P5：移动方向
-    public generateMoveTargetNearShootPos(_type:number,_radius:number,_speed:number,_genRange:number,_dirDeg:number):TargetController{      
+    public generateMoveTargetNearShootPos(_type:number,_radius:number,_speed:number,_genRange:number,_dirDeg:number = 0):TargetController{      
         _genRange = _genRange || 300;
         let shootCtrl = this.shootNode.getComponent("ShootController");
         let pos = shootCtrl.getShootPoint();

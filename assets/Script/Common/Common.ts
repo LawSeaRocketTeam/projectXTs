@@ -93,13 +93,13 @@ export default class Common extends Singleton {
     }
 
     //字符串格式化
-    public stringFormat() : string {
-        if( arguments.length == 0 )
+    public stringFormat(...x) : string {
+        if( x.length == 0 )
             return null; 
-        var str = arguments[0]; 
-        for(var i=1;i<arguments.length;i++) {
+        var str = x[0]; 
+        for(var i=1;i<x.length;i++) {
             var re = new RegExp('\\{' + (i-1) + '\\}','gm');
-            str = str.replace(re, arguments[i]);
+            str = str.replace(re, x[i]);
         }
         return str;
     } 
